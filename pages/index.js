@@ -52,7 +52,7 @@ export default function Home({ posts = [] }) {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Amplify + Next.js(frontend branch)</h1>
+        <h1 className={styles.title}>Amplify + Next.js(frontend branch)(prod)</h1>
 
         <p className={styles.description}>
           <code className={styles.code}>{posts.length}</code>
