@@ -10,13 +10,32 @@ Amplify.configure({ ...awsExports, ssr: true });
 
 export async function getServerSideProps({ req }) {
   const SSR = withSSRContext({ req });
-  const response = await SSR.API.graphql({ query: listTodos });
 
-  return {
-    props: {
-      posts: response.data.listTodos.items,
-    },
-  };
+  const response = await SSR.API.graphql({ query: listTodos })
+    .then(res => {
+      return res
+    })
+    .catch(err => {
+      return {
+        isError: true,
+        error: err
+      }
+    })
+
+  if (response.isError) {
+    return {
+      props: {
+        error: response.error
+      }
+    }
+  } else {
+    return {
+      props: {
+        posts: response.data?.listTodos?.items,
+      },
+    };
+  }
+
 }
 
 async function handleCreatePost(event) {
@@ -43,7 +62,16 @@ async function handleCreatePost(event) {
   }
 }
 
-export default function Home({ posts = [] }) {
+export default function Home({ posts = [], error = '' }) {
+  if (Boolean(error)) {
+    return (
+      <>
+        <p style={{ color: 'red' }}> (prod){error} </p>
+        <p style={{ color: 'red' }}> {JSON.stringify(error)} </p>
+      </>
+    )
+  }
+
   return (
     <div className={styles.container}>
       <Head>
